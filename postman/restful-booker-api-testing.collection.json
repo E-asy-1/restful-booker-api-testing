@@ -12,14 +12,14 @@
       "name": "GET - Booking",
       "item": [
         {
-          "name": "GET Booking",
+          "name": "GET /Booking",
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"Status code is 200\", function () {\n    pm.response.to.have.status(200);\n});\n\npm.test(\"Response contains bookingid\", function () {\n    const data = pm.response.json();\n\n    pm.expect(data[0]).to.have.property(\"bookingid\");\n});"
+                  "pm.test(\"Status code is 200\", function () {\n    pm.response.to.have.status(200);\n});\n\npm.test(\"Response is an array\", function () {\n    const data = pm.response.json();\n\n    pm.expect(data).to.be.an(\"array\");\n});\n\npm.test(\"Each booking has bookingid\", function () {\n    const data = pm.response.json();\n\n    data.forEach(function (booking) {\n        pm.expect(booking).to.have.property(\"bookingid\");\n    });\n});"
                 ]
               }
             }
@@ -44,14 +44,14 @@
           "response": []
         },
         {
-          "name": "GET Booking by ID",
+          "name": "GET /Booking/{id}",
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response contains firstname\", function () {\r\n    const data = pm.response.json();\r\n\r\n    pm.expect(data).to.have.property(\"firstname\");\r\n});"
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response contains firstname\", function () {\r\n    const data = pm.response.json();\r\n\r\n    pm.expect(data).to.have.property(\"firstname\");\r\n});\r\n\r\npm.test(\"Response is an object\", function () {\r\n    const data = pm.response.json();\r\n\r\n    pm.expect(data).to.be.an(\"object\");\r\n});\r\n\r\npm.test(\"Response contains bookingdates\", function () {\r\n    const data = pm.response.json();\r\n\r\n    pm.expect(data).to.have.property(\"bookingdates\");\r\n});\r\n\r\npm.test(\"Response contains totalprice\", function () {\r\n    const data = pm.response.json();\r\n\r\n    pm.expect(data).to.have.property(\"totalprice\");\r\n});\r\n\r\npm.test(\"Totalprice is a number\", function () {\r\n    const data = pm.response.json();\r\n\r\n    pm.expect(data.totalprice).to.be.a('number');\r\n});\r\n\r\npm.test(\"Depositpaid is a boolean\", function () {\r\n    const data = pm.response.json();\r\n\r\n    pm.expect(data.depositpaid).to.be.a('boolean');\r\n});\r\n\r\npm.test(\"Totalprice is not negative\", function () {\r\n    const data = pm.response.json();\r\n\r\n    pm.expect(data.totalprice).to.be.at.least(0);\r\n});\r\n\r\npm.test(\"Firstname is not empty\", function () {\r\n    const data = pm.response.json();\r\n\r\n    pm.expect(data.firstname).to.not.eql('');\r\n});"
                 ]
               }
             }
@@ -60,7 +60,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "https://restful-booker.herokuapp.com/booking/1",
+              "raw": "https://restful-booker.herokuapp.com/booking/2",
               "protocol": "https",
               "host": [
                 "restful-booker",
@@ -69,7 +69,7 @@
               ],
               "path": [
                 "booking",
-                "1"
+                "2"
               ]
             }
           },
@@ -83,7 +83,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Firstname is Tom\", function () {\r\n    const data = pm.response.json();\r\n\r\n    pm.expect(data.firstname).to.eql(\"Tom\");\r\n});"
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Firstname is Tom\", function () {\r\n    const data = pm.response.json();\r\n\r\n    pm.expect(data.firstname).to.eql(\"Tom\");\r\n});\r\n\r\npm.test(\"Created booking has correct totalprice\", function () {\r\n    const data = pm.response.json();\r\n\r\n    pm.expect(data.totalprice).to.eql(100);\r\n});\r\n\r\npm.test(\"Created booking has correct checkin and checkout\", function () {\r\n    const data = pm.response.json();\r\n\r\n    pm.expect(data.bookingdates.checkin).to.eql(\"2026-10-02\");\r\n    pm.expect(data.bookingdates.checkout).to.eql(\"2026-10-05\");\r\n});"
                 ]
               }
             }
@@ -92,7 +92,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "https://restful-booker.herokuapp.com/booking/143",
+              "raw": "https://restful-booker.herokuapp.com/booking/1300",
               "protocol": "https",
               "host": [
                 "restful-booker",
@@ -101,39 +101,7 @@
               ],
               "path": [
                 "booking",
-                "143"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "GET Booking by ID Copy",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response contains firstname\", function () {\r\n    const data = pm.response.json();\r\n\r\n    pm.expect(data).to.have.property(\"firstname\");\r\n});"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "https://restful-booker.herokuapp.com/booking/1",
-              "protocol": "https",
-              "host": [
-                "restful-booker",
-                "herokuapp",
-                "com"
-              ],
-              "path": [
-                "booking",
-                "1"
+                "1300"
               ]
             }
           },
@@ -145,14 +113,14 @@
       "name": "POST - Booking",
       "item": [
         {
-          "name": "Post Booking",
+          "name": "POST Booking",
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"Successful POST request\", function () {\n    pm.expect(pm.response.code).to.be.oneOf([200, 201]);\n});\n\npm.test(\"Response contains bookingid\", function () {\n    const data = pm.response.json();\n\n    pm.expect(data).to.have.property(\"bookingid\");\n});\n\npm.test(\"Totalprice is handled\", function () {\n    const data = pm.response.json();\n\n   pm.expect(data.booking.totalprice).to.not.equal(null);\n});"
+                  "pm.test(\"Successful POST request\", function () {\n    pm.expect(pm.response.code).to.be.oneOf([200, 201]);\n});\n\npm.test(\"Created booking contains bookingid\", function () {\n    const data = pm.response.json();\n\n    pm.expect(data).to.have.property(\"bookingid\");\n});\n\npm.test(\"Created booking has correct firstname\", function () {\n    const data = pm.response.json();\n\n    pm.expect(data.booking.firstname).to.equal(\"Tom\");\n});\n\npm.test(\"bookingid is a number\", function () {\n    const data = pm.response.json();\n\n    pm.expect(data.bookingid).to.be.a('number');\n});\n\npm.test(\"Created booking has correct totalprice\", function () {\n    const data = pm.response.json();\n\n    pm.expect(data.booking.totalprice).to.equal(100);\n});\n\npm.test(\"Created booking contains bookingdates\", function () {\n    const data = pm.response.json();\n\n    pm.expect(data.booking).to.have.property(\"bookingdates\");\n});\n\npm.test(\"Created booking has correct checkin date\", function () {\n    const data = pm.response.json();\n\n    pm.expect(data.booking.bookingdates).to.have.property(\"checkin\");\n    pm.expect(data.booking.bookingdates.checkin).to.eql(\"2026-10-02\");\n});\n\npm.test(\"Created booking has correct checkout date\", function () {\n    const data = pm.response.json();\n\n    pm.expect(data.booking.bookingdates).to.have.property(\"checkout\");\n    pm.expect(data.booking.bookingdates.checkout).to.eql(\"2026-10-05\");\n});\n\npm.test(\"Created booking checkin is a string\", function () {\n    const data = pm.response.json();\n\n    pm.expect(data.booking.bookingdates.checkin).to.be.a(\"string\");\n})\n\npm.test(\"Created booking totalprice is not negative\", function () {\n    const data = pm.response.json();\n\n    pm.expect(data.booking.totalprice).to.be.at.least(0);\n});\n"
                 ]
               }
             }
@@ -191,7 +159,7 @@
       "name": "PUT - Booking",
       "item": [
         {
-          "name": "PUT Booking",
+          "name": "PUT /Booking/{id}",
           "event": [
             {
               "listen": "test",
@@ -221,7 +189,7 @@
               }
             },
             "url": {
-              "raw": "https://restful-booker.herokuapp.com/booking/3670",
+              "raw": "https://restful-booker.herokuapp.com/booking/4987",
               "protocol": "https",
               "host": [
                 "restful-booker",
@@ -230,7 +198,7 @@
               ],
               "path": [
                 "booking",
-                "3670"
+                "4987"
               ]
             }
           },
@@ -242,7 +210,7 @@
       "name": "Authentication",
       "item": [
         {
-          "name": "POST Auth",
+          "name": "POST /Auth",
           "event": [
             {
               "listen": "test",
@@ -287,18 +255,7 @@
       "name": "DELETE - Booking",
       "item": [
         {
-          "name": "DELETE Booking",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  ""
-                ]
-              }
-            }
-          ],
+          "name": "DELETE /Booking/{id}",
           "request": {
             "method": "DELETE",
             "header": [
