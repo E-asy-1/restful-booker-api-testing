@@ -1,164 +1,137 @@
-# restful-booker-qa
+# Restful Booker API Testing
 
-A layered QA portfolio project targeting the Restful-Booker demo application — a hotel booking API and web UI built specifically for QA practice. This project demonstrates a full-stack test strategy across API and UI layers, with both suites running automatically in CI on every push.
+## 项目简介
 
-![CI Status](https://github.com/jensenmd/restful-booker-qa/actions/workflows/ci.yml/badge.svg)
+这是一个基于 Restful-Booker 酒店预订系统的 API 测试项目，主要用于练习和展示软件测试岗位所需的 API 测试能力。
 
-![restful-booker-qa portfolio project card](restful-booker-qa-project-card.png)
+项目使用 Postman 设计和执行 API 测试，通过 JavaScript 编写 Post-response 测试脚本，对接口的 HTTP 状态码、响应字段、数据类型、业务数据及数据一致性进行验证。
 
-Built by **Michael D. Jensen** — Senior QA Engineer with 15+ years of enterprise testing experience, specializing in API testing, automation, and CI/CD-integrated quality practices.
-
-🔗 [LinkedIn](https://www.linkedin.com/in/michaeljensen-qa/) | 📧 jensen.md@gmail.com
-
+同时结合 Excel 编写测试用例，并使用 Git / GitHub 对测试资产进行版本管理。
 ---
 
-## What This Project Demonstrates
+## 测试范围
 
-| Layer | Stack | Coverage |
-|---|---|---|
-| API Testing | Postman + Newman | Auth flows, full CRUD, error handling, edge cases |
-| UI Automation | Playwright + JavaScript | End-to-end booking workflows, form validation, cross-browser |
-| CI/CD Pipeline | GitHub Actions | Both suites run automatically on every push and PR |
+本项目目前主要覆盖 Restful-Booker API 的以下功能：
 
-This is not a single-tool project. The combination of Postman API testing and Playwright UI automation — each with its own CI job and HTML report — reflects how layered test strategies work in production environments: different tools for different layers, unified in a single pipeline.
-
+- **认证接口**：测试登录认证及 Token 获取
+- **Booking 查询**：测试获取 Booking 列表及根据 ID 查询 Booking
+- **Booking 创建**：测试正常创建、异常数据及响应数据校验
+- **Booking 修改**：测试认证后的 Booking 数据修改
+- **Booking 删除**：测试认证后的 Booking 删除及删除结果验证
+- **数据一致性**：通过 API 请求结果验证创建或修改后的数据是否符合预期
+- **异常场景**：测试非法数据、未认证请求及资源不存在等情况
 ---
 
-## Why Restful-Booker?
+## 使用工具
 
-[Restful-Booker](https://restful-booker.herokuapp.com) is an open-source hotel booking demo application built by Mark Winteringham specifically for QA practice. It provides:
-
-- A realistic REST API (`/api/booking`) with authentication, CRUD operations, and error scenarios
-- A simple web UI for end-to-end workflow testing
-- Enough complexity to write meaningful tests without requiring proprietary access
-
-It's the QA community's standard practice target for good reason — it behaves like a real application, including imperfect behavior worth testing against.
-
+| 工具 / 技术 | 用途 |
+|---|---|
+| Postman | API 请求发送、接口测试与结果验证 |
+| JavaScript | 编写 Postman Post-response 测试脚本 |
+| Excel | 编写和管理 API 测试用例 |
+| Git | 测试脚本和测试用例的版本管理 |
+| GitHub | 项目代码及测试资产托管 |
+| REST API | 被测接口类型 |
+| HTTP | 接口请求与响应通信协议 |
 ---
 
-## Project Structure
+## 项目结构
 
-```
-restful-booker-qa/
-├── .github/
-│   └── workflows/
-│       └── ci.yml              # Runs Newman + Playwright on push/PR
+```text
+restful-booker-api-testing/
 ├── postman/
-│   ├── restful-booker.collection.json   # Postman collection (importable)
-│   ├── restful-booker.environment.json  # Environment variables
-│   └── README.md               # Collection notes and Newman usage
-├── playwright/
-│   ├── tests/                  # Test specs
-│   ├── pages/                  # Page Object Models
-│   ├── utils/                  # Helpers and fixtures
-│   ├── playwright.config.js
-│   └── package.json
+│   └── restful-booker-api-testing.collection.json
+├── api测试用例.xlsx
 └── README.md
 ```
-
 ---
 
-## Test Coverage
+## API 测试用例设计
 
-### API Layer — Postman / Newman
+测试用例结合软件测试基本方法进行设计，主要覆盖：
 
-| Endpoint | Scenarios Covered |
-|---|---|
-| `POST /auth` | Token generation (valid credentials), rejection (invalid credentials) |
-| `GET /booking` | List all bookings, filter by name, filter by date range |
-| `POST /booking` | Create booking (valid payload, missing required fields, invalid dates) |
-| `GET /booking/:id` | Retrieve specific booking by ID |
-| `PUT /booking/:id` | Full update (authenticated) |
-| `PATCH /booking/:id` | Partial update (authenticated) |
-| `DELETE /booking/:id` | Delete booking (authenticated), verify removal |
+- **正常场景**：验证接口在合法输入下能够正常完成业务操作
+- **异常场景**：验证非法参数、错误数据及未认证请求的处理情况
+- **边界场景**：验证关键字段在边界值情况下的系统表现
+- **数据校验**：验证响应字段是否存在、数据类型是否正确以及数据是否符合业务规则
+- **数据一致性**：通过后续 GET 请求验证创建或修改后的数据是否与预期一致
+- **优先级划分**：根据功能重要程度划分 P0 / P1 / P2 等优先级
 
-JavaScript test scripts validate status codes, response schema, and business rules inline within each request.
-
-### UI Layer — Playwright
-
-| Workflow | Coverage |
-|---|---|
-| Room search | Search for available rooms by date |
-| Booking happy path | Complete a full reservation end-to-end |
-| Form validation | Required field enforcement, date conflict handling |
-| Contact form | Submission and confirmation |
-
-UI tests run cross-browser across **Chromium** and **Firefox** via Playwright's multi-browser configuration.
-
-### Page Object Model
-
-UI tests use the Page Object Model (POM) pattern — UI interactions are abstracted into reusable page classes rather than scattered across test specs. This keeps tests readable, maintainable, and resilient to UI changes.
-
+测试用例统一使用 Excel 管理，并记录测试结果及问题情况。
 ---
 
-## CI/CD Pipeline
+## Postman 测试脚本
 
-GitHub Actions runs on every push and pull request to `main`:
+项目使用 Postman 的 Post-response Scripts 编写 JavaScript 断言，对接口响应进行自动化校验。
 
-- **Newman job** — executes the full Postman collection, uploads HTML report as a downloadable artifact
-- **Playwright job** — runs all UI specs across Chromium and Firefox, uploads Playwright HTML report
+例如创建 Booking 后，验证 HTTP 状态码、`bookingid`、姓名以及价格等关键数据：
 
-Both jobs run independently and in parallel. A failure in one does not block the other.
+```javascript
+pm.test("Successful POST request", function () {
+    pm.expect(pm.response.code).to.be.oneOf([200, 201]);
+});
 
-> **Note on CI stability:** The Restful-Booker demo server (hosted on Heroku) intermittently returns 500 errors — a known, widely-documented characteristic of this public test target, not an issue with the test code itself. This is a useful real-world reminder that CI failures in external-dependency pipelines require triage before assuming test code is at fault. Tests that fail due to upstream instability are categorically different from tests that fail due to application defects — distinguishing between the two is a core QA discipline.
+pm.test("Created booking contains bookingid", function () {
+    const data = pm.response.json();
 
----
+    pm.expect(data).to.have.property("bookingid");
+});
 
-## Running Locally
+pm.test("Created booking has correct firstname", function () {
+    const data = pm.response.json();
 
-### Prerequisites
-- Node.js v18+
-- Newman: `npm install -g newman`
-- Playwright: installed via `npm install` in `/playwright`
+    pm.expect(data.booking.firstname).to.equal("Tom");
+});
 
-### API Tests (Newman)
-```bash
-cd postman
+pm.test("Created booking has correct totalprice", function () {
+    const data = pm.response.json();
 
-newman run restful-booker.collection.json \
-  --environment restful-booker.environment.json \
-  --reporters cli,htmlextra \
-  --reporter-htmlextra-export reports/api-report.html
+    pm.expect(data.booking.totalprice).to.equal(100);
+});
 ```
-
-### UI Tests (Playwright)
-```bash
-cd playwright
-npm install
-npx playwright install --with-deps
-
-# Run all tests (headless)
-npx playwright test
-
-# Run with browser visible
-npx playwright test --headed
-
-# View HTML report
-npx playwright show-report
-```
-
 ---
 
-## QA Portfolio Quick Reference
+## 测试结果
 
-This project is part of a broader QA portfolio demonstrating complementary quality-engineering skills.
+本项目通过 Postman 实际执行 API 测试，并根据测试结果持续调整和完善测试脚本。
 
-| Project | Focus |
+当前已完成并验证的主要接口包括：
+
+| 接口 | 测试内容 |
 |---|---|
-| [android-appium-wdio-poc](https://github.com/jensenmd/android-appium-wdio-poc) | Native Android UI automation proof of concept using Appium, WebdriverIO, TypeScript, and UiAutomator2 |
-| [mapmyrun-quality-investigation](https://github.com/jensenmd/mapmyrun-quality-investigation) | Black-box mobile and GPS quality investigation using field evidence and bounded conclusions |
-| [restful-booker-qa](https://github.com/jensenmd/restful-booker-qa) **(this repository)** | Layered API and UI automation using Postman, Newman, Playwright, and GitHub Actions |
-| [pharmacy-spend-etl-qa](https://github.com/jensenmd/pharmacy-spend-etl-qa) | ETL pipeline and SQL-driven data-integrity validation modeled after healthcare analytics work |
-| [qa-automation-showcase](https://github.com/jensenmd/qa-automation-showcase) | REST API testing, data validation, and CI/CD-integrated automation |
-| [ai-qa-framework](https://github.com/jensenmd/ai-qa-framework) | Human-reviewed AI-assisted test generation with structured cases and pytest execution |
-| [claude-code-qa-sessions](https://github.com/jensenmd/claude-code-qa-sessions) | Agentic analysis of existing QA repositories with human review and targeted implementation |
-| [agentqa-orchestrator](https://github.com/jensenmd/agentqa-orchestrator) | Structured agentic code auditing using Python, Pydantic, Gemini, and JSON |
+| `POST /auth` | 认证及 Token 获取 |
+| `GET /booking` | Booking 列表查询及响应数据校验 |
+| `GET /booking/{id}` | 指定 Booking 查询及字段、类型、业务规则校验 |
+| `POST /booking` | Booking 创建及响应数据校验 |
+| `PUT /booking/{id}` | Booking 修改及修改结果验证 |
+| `DELETE /booking/{id}` | Booking 删除及删除结果验证 |
+
+测试过程中针对异常数据进行了实际验证，例如 `totalprice` 传入字符串时接口返回 `200 OK`，但响应中的 `totalprice` 为 `null`。该结果已记录在测试用例中，并标记为“待确认”，避免在缺少明确接口规范的情况下直接将接口行为判定为缺陷。
 ---
-## Author
 
-**Michael D. Jensen** — Senior QA Engineer
-15+ years of enterprise software testing experience across healthcare IT, financial systems, telecommunications, and cybersecurity. Deep background in REST API validation, ETL pipeline testing, SQL-based data integrity verification, and full-stack manual testing in Agile environments.
+## 能力体现
 
-Current hands-on work includes Python/pytest automation, Playwright UI testing, and CI/CD-integrated quality practices.
+通过本项目，主要实践和掌握了以下 API 测试能力：
 
-🔗 [LinkedIn](https://www.linkedin.com/in/michaeljensen-qa/) | 🐙 [GitHub Profile](https://github.com/jensenmd) | 📧 jensen.md@gmail.com
+- 理解 REST API 的基本测试流程及 HTTP 请求 / 响应机制
+- 使用 Postman 独立设计和执行 API 测试
+- 使用 JavaScript 编写 Postman Post-response 断言
+- 根据响应 JSON 结构进行字段、类型和值的校验
+- 使用等价类、边界值及场景分析设计测试用例
+- 覆盖正常、异常、边界、认证及数据一致性场景
+- 使用 Excel 管理测试用例并记录实际测试结果
+- 使用 Git / GitHub 管理测试项目及测试资产
+- 能够根据实际测试结果分析接口行为，并结合需求判断是否属于缺陷
+---
+
+## 后续计划
+
+后续将继续完善项目的自动化测试能力：
+
+- 使用 Newman 批量执行 Postman Collection
+- 增加更完整的异常及边界测试场景
+- 增加环境变量和动态测试数据
+- 尝试接入 GitHub Actions，实现 API 测试自动执行
+- 根据测试过程中发现的问题完善缺陷记录和测试报告
+
+
